@@ -49,13 +49,17 @@ export default {
     GameStorage.data.accusations.splice(0, GameStorage.data.accusations.length);
   },
 
-  addPlayer: function (name, cards, cardNames) {
-    addPlayerToData(GameStorage.data, { name: name, cards: cards });
+  addPlayer: function (player, cardNames) {
+    addPlayerToData(GameStorage.data, { name: player.name, cards: player.cards });
     if (cardNames) {
-      cardNames.forEach(cardName => {
-        setHasCard(findCardInData(GameStorage.data, cardName), GameStorage.data.players.length - 1);
-      });
+      this.setHasCards(GameStorage.data.players.length - 1, cardNames);
     }
+  },
+
+  setHasCards: function (playerIndex, cardNames) {
+    cardNames.forEach(cardName => {
+      setHasCard(findCardInData(GameStorage.data, cardName), playerIndex);
+    });
   },
 
   addAccusation: function (accuser, suspect, weapon, room, revealer, revealed) {

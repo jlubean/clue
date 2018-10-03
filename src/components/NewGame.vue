@@ -3,29 +3,45 @@
     <div class="options">
       <section id="how-many-players" v-if="step === 1">
         <h2>How many players?</h2>
-        <select>
-          2-6
-        </select>
+        <md-radio v-for="(item, index) in numberOfPlayersSelect" v-bind:value="item" v-bind:key="index" v-model="numberOfPlayers">{{item}}</md-radio>
       </section>
       <section id="who-are-the-players" v-if="step === 2">
-        <h2>Player {{playerNumber}}</h2>
+        <h2>Player {{playerNumber}} of {{numberOfPlayers}}</h2>
         <h3 v-if="playerNumber === 1">What is YOUR name?</h3>
         <h3 v-if="playerNumber === 2">Who is the person to YOUR LEFT?</h3>
         <h3 v-if="playerNumber > 2">Who is the person to the LEFT of {{lastPlayerName}}?</h3>
-        <input>
+        <md-field>
+          <label>Name</label>
+          <md-input v-model="playerName"></md-input>
+        </md-field>
         <h3 v-if="playerNumber === 1">How many cards do YOU have?</h3>
-        <h3 v-if="playerNumber > 1">How many cards does {{playerName}} have?</h3>
-        <input>
+        <h3 v-if="playerNumber > 1">How many cards does {{computedPlayerName}} have?</h3>
+        <md-field>
+          <label># of Cards</label>
+          <md-input v-model="playerCards"></md-input>
+        </md-field>
       </section>
       <section id="your-cards" v-if="step === 3">
         <h2>What cards do YOU have?</h2>
         <div>
-          <input type="checkbox" id="checkbox_mustard"> <label for="checkbox_mustard">Mustard</label>
+          <h3>Suspects</h3>
+          <div class="all-cards">
+            <md-checkbox v-for="card in suspects" v-bind:value="card.name" v-bind:key="card.name" v-model="cards">{{card.name}}</md-checkbox>
+          </div>
+          <h3>Weapons</h3>
+          <div class="all-cards">
+            <md-checkbox v-for="card in weapons" v-bind:value="card.name" v-bind:key="card.name" v-model="cards">{{card.name}}</md-checkbox>
+          </div>
+          <h3>Rooms</h3>
+          <div class="all-cards">
+            <md-checkbox v-for="card in rooms" v-bind:value="card.name" v-bind:key="card.name" v-model="cards">{{card.name}}</md-checkbox>
+          </div>
         </div>
       </section>
     </div>
     <footer>
-      <button v-on:click="nextStep">Continue</button>
+      <md-button class="md-raised previous" v-on:click="previousStep" v-if="step > 1">Previous</md-button>
+      <md-button class="md-raised next" v-on:click="nextStep">Next</md-button>
     </footer>
   </div>
 </template>
@@ -38,41 +54,128 @@ export default {
   name: 'NewGame',
   data () {
     return {
+      numberOfPlayersSelect: [ 2, 3, 4, 5, 6 ],
       numberOfPlayers: 2,
-      playerName: 'Player 1',
+      playerLabel: 'Player 1',
+      playerName: '',
       playerNumber: 1,
       playerCards: 3,
       step: 1,
-      cards: []
+      cards: [],
+      suspects: GameStorage.data.suspects,
+      weapons: GameStorage.data.weapons,
+      rooms: GameStorage.data.rooms
     };
   },
+  computed: {
+    computedPlayerName: function () {
+      return this.playerName || this.playerLabel;
+    }
+  },
   methods: {
-    nextStep () {
-      if (this.step === 1) {
-        this.playerName = GameStorage.data.players.length ? GameStorage.data.players[0].name : 'Player 1';
-        this.step++;
-        this.playerCards = Math.floor(21 / this.numberOfPlayers);
-        this.lastPlayerName = this.playerName;
+    getPlayer (playerNumber) {
+      return playerNumber <= GameStorage.data.players.length ? GameStorage.data.players[playerNumber - 1] : {};
+    },
+    setCurrentPlayer (player) {
+      this.lastPlayerName = GameStorage.data.players.length > 1 && this.playerNumber > 1 ? GameStorage.data.players[this.playerNumber - 2].name : '';
+      this.playerLabel = 'Player ' + this.playerNumber;
+      this.playerName = player.name || '';
+      this.playerCards = player.cards || Math.floor(18 / this.numberOfPlayers);
+    },
+    previousStep () {
+      let player = this.getPlayer(this.playerNumber);
+      if (this.step === 3) {
+        Game.setHasCards(0, this.cards);
+        this.step--;
+        this.playerNumber = this.numberOfPlayers;
+        this.setCurrentPlayer(player);
       } else if (this.step === 2) {
-        Game.addPlayer(this.playerName, this.playerCards);
+        player.name = this.playerName || this.playerLabel;
+        player.cards = this.playerCards || Math.floor(18 / this.numberOfPlayers);
+        if (this.playerNumber > GameStorage.data.players.length) {
+          Game.addPlayer(player);
+        }
+        if (this.playerNumber > 1) {
+          this.playerNumber--;
+          player = GameStorage.data.players[this.playerNumber - 1];
+          this.setCurrentPlayer(player);
+        } else {
+          this.step--;
+        }
+      }
+    },
+    nextStep () {
+      let player = this.getPlayer(this.playerNumber);
+      if (this.step === 1) {
+        this.setCurrentPlayer(player);
+        this.lastPlayerName = '';
+        this.step++;
+      } else if (this.step === 2) {
+        player.name = this.playerName || this.playerLabel;
+        player.cards = this.playerCards || Math.floor(18 / this.numberOfPlayers);
+        if (this.playerNumber > GameStorage.data.players.length) {
+          Game.addPlayer(player);
+        }
         if (this.playerNumber < this.numberOfPlayers) {
-          this.lastPlayerName = this.playerName;
           this.playerNumber++;
-          this.playerName = 'Player ' + this.playerNumber;
-          this.playerCards = Math.floor(21 / this.numberOfPlayers);
+          player = this.getPlayer(this.playerNumber);
+          this.setCurrentPlayer(player);
         } else {
           this.step++;
         }
       } else if (this.step === 3) {
-        this.cards.forEach((card) => {
-          Game.setHasCard(card, 0);
-        });
-        this.$router.replace('');
+        Game.setHasCards(0, this.cards);
+        this.$router.replace('/card');
       }
     }
   }
 };
 </script>
 <style scoped>
+  footer {
+    margin-top: 16px;
+    height: 50px;
+    position: relative;
+  }
 
+  .md-button.previous {
+    left: 0;
+    position: absolute;
+  }
+
+  .md-button.next {
+    right: 0;
+    position: absolute;
+  }
+
+  .md-checkbox {
+    margin: 10px 16px 10px 0;
+  }
+  .all-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .all-cards .md-checkbox {
+    width: calc(50% - 16px);
+  }
+  @media screen and (min-width: 480px) {
+    .all-cards .md-checkbox {
+      width: calc(33% - 16px);
+    }
+  }
+  @media screen and (min-width: 620px) {
+    .all-cards .md-checkbox {
+      width: calc(25% - 16px);
+    }
+  }
+  @media screen and (min-width: 768px) {
+    .all-cards .md-checkbox {
+      width: calc(20% - 16px);
+    }
+  }
+  @media screen and (min-width: 1024px) {
+    .all-cards .md-checkbox {
+      width: calc(16.667% - 16px);
+    }
+  }
 </style>

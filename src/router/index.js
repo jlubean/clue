@@ -13,6 +13,11 @@ export default new Router({
       component: Card
     },
     {
+      path: '/card',
+      name: 'Card',
+      component: Card
+    },
+    {
       path: '/new-game',
       name: 'NewGame',
       component: NewGame
