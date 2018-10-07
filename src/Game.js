@@ -62,16 +62,7 @@ export default {
     });
   },
 
-  addAccusation: function (accuser, suspect, weapon, room, revealer, revealed) {
-    GameStorage.data.accusations.push({
-      accuser, suspect, weapon, room, revealer, revealed
-    });
-    let accuserIndex = GameStorage.data.players.findIndex((player) => {
-      return player.name === accuser;
-    });
-    let revealerIndex = GameStorage.data.players.findIndex((player) => {
-      return player.name === revealer;
-    });
+  addAccusation: function (accuserIndex, suspect, weapon, room, revealerIndex, revealed) {
     let suspectCard = findCard(GameStorage.data.suspects, suspect);
     let weaponCard = findCard(GameStorage.data.weapons, weapon);
     let roomCard = findCard(GameStorage.data.rooms, room);
@@ -83,6 +74,9 @@ export default {
       let hasSuspectCard = suspectCard.players[revealerIndex].has === 'y';
       let hasWeaponCard = weaponCard.players[revealerIndex].has === 'y';
       let hasRoomCard = roomCard.players[revealerIndex].has === 'y';
+      let notHaveSuspectCard = suspectCard.players[revealerIndex].has === 'n';
+      let notHaveWeaponCard = weaponCard.players[revealerIndex].has === 'n';
+      let notHaveRoomCard = roomCard.players[revealerIndex].has === 'n';
 
       if (!hasSuspectCard && !hasWeaponCard) {
         setHasCard(roomCard, revealerIndex);
@@ -91,7 +85,20 @@ export default {
       } if (!hasWeaponCard && !hasRoomCard) {
         setHasCard(suspectCard, revealerIndex);
       }
+
+      // If the revealer only has one card, set revealed
+      if (hasSuspectCard && notHaveWeaponCard && notHaveRoomCard) {
+        revealed = suspect;
+      } else if (notHaveSuspectCard && hasWeaponCard && notHaveRoomCard) {
+        revealed = weapon;
+      } else if (notHaveSuspectCard && notHaveWeaponCard && hasRoomCard) {
+        revealed = room;
+      }
     }
+
+    GameStorage.data.accusations.splice(0, 0, {
+      accuserIndex, suspect, weapon, room, revealerIndex, revealed
+    });
 
     // players between the accuser and revealer do not have the cards
     GameStorage.data.players.forEach((player, index) => {

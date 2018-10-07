@@ -1,9 +1,9 @@
 <template>
   <div class="new-game">
-    <div class="options">
+    <md-content class="md-scrollbar options">
       <section id="how-many-players" v-if="step === 1">
         <h2>How many players?</h2>
-        <md-radio v-for="(item, index) in numberOfPlayersSelect" v-bind:value="item" v-bind:key="index" v-model="numberOfPlayers">{{item}}</md-radio>
+        <md-radio v-for="(item, index) in numberOfPlayersSelect" v-bind:value="item" v-bind:key="index" v-model="numberOfPlayers"><span class="number-of-players-label">{{item}}</span></md-radio>
       </section>
       <section id="who-are-the-players" v-if="step === 2">
         <h2>Player {{playerNumber}} of {{numberOfPlayers}}</h2>
@@ -38,7 +38,7 @@
           </div>
         </div>
       </section>
-    </div>
+    </md-content>
     <footer>
       <md-button class="md-raised previous" v-on:click="previousStep" v-if="step > 1">Previous</md-button>
       <md-button class="md-raised next" v-on:click="nextStep">Next</md-button>
@@ -125,17 +125,42 @@ export default {
         }
       } else if (this.step === 3) {
         Game.setHasCards(0, this.cards);
-        this.$router.replace('/card');
+        this.$router.push({ name: 'Card' });
       }
     }
   }
 };
 </script>
 <style scoped>
+  .new-game {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 56px;
+  }
+
+  .options {
+    bottom: 68px;
+    left: 0;
+    overflow: auto;
+    padding: 16px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
   footer {
-    margin-top: 16px;
-    height: 50px;
-    position: relative;
+    bottom: 0;
+    background-color: #FFF;
+    height: 68px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  footer .md-button {
+    margin: 16px;
   }
 
   .md-button.previous {
@@ -151,6 +176,11 @@ export default {
   .md-checkbox {
     margin: 10px 16px 10px 0;
   }
+
+  .number-of-players-label {
+    margin-left: -8px;
+  }
+
   .all-cards {
     display: flex;
     flex-wrap: wrap;
