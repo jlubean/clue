@@ -49,7 +49,6 @@
 <script>
 import GameStorage from '../GameStorage';
 import Game from '../Game';
-
 export default {
   name: 'NewGame',
   data () {

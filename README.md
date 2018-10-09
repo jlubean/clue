@@ -1,4 +1,4 @@
-# clue
+# Clue Card
 
 > A Vue.js project
 

@@ -60,6 +60,22 @@ export default {
     cardNames.forEach(cardName => {
       setHasCard(findCardInData(GameStorage.data, cardName), playerIndex);
     });
+    // Mark NO on all other cards
+    GameStorage.data.suspects.forEach(card => {
+      if (cardNames.indexOf(card.name) === -1) {
+        card.players[playerIndex].has = 'n';
+      }
+    });
+    GameStorage.data.weapons.forEach(card => {
+      if (cardNames.indexOf(card.name) === -1) {
+        card.players[playerIndex].has = 'n';
+      }
+    });
+    GameStorage.data.rooms.forEach(card => {
+      if (cardNames.indexOf(card.name) === -1) {
+        card.players[playerIndex].has = 'n';
+      }
+    });
   },
 
   addAccusation: function (accuserIndex, suspect, weapon, room, revealerIndex, revealed) {

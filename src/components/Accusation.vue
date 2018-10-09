@@ -76,7 +76,7 @@ export default {
       this.step--;
     },
     nextStep () {
-      if ((this.step === 3 && this.accuserIndex !== 0 && this.revealerIndex !== 0) || (this.step === 4 && this.accuserIndex === 0)) {
+      if ((this.step === 3 && this.accuserIndex !== 0 && this.revealerIndex !== 0) || (this.step === 4 && (this.accuserIndex === 0 || this.revealerIndex === 0))) {
         Game.addAccusation(this.accuserIndex, this.suspect, this.weapon, this.room, this.revealerIndex, this.revealed);
         this.$router.push({ name: 'Card' });
       } else {
@@ -85,25 +85,6 @@ export default {
     }
   },
   computed: {
-    categoriesAndCards () {
-      let categoriesAndCards = [];
-      categoriesAndCards.push({ name: 'Suspects', type: 'Category' });
-      GameStorage.data.suspects.forEach(suspect => {
-        suspect.type = 'Card';
-        categoriesAndCards.push(suspect);
-      });
-      categoriesAndCards.push({ name: 'Weapons', type: 'Category' });
-      GameStorage.data.weapons.forEach(weapon => {
-        weapon.type = 'Card';
-        categoriesAndCards.push(weapon);
-      });
-      categoriesAndCards.push({ name: 'Rooms', type: 'Category' });
-      GameStorage.data.rooms.forEach(room => {
-        room.type = 'Card';
-        categoriesAndCards.push(room);
-      });
-      return categoriesAndCards;
-    }
   }
 };
 </script>

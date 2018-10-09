@@ -1,55 +1,67 @@
 <template>
   <div class="card">
-    <div class="menu">
+    <div class="actions">
       <a href="#/accusation"><md-icon>feedback</md-icon> Add Accusation</a>
     </div>
-    <md-table md-card>
-      <md-table-toolbar>
+    <md-card>
+      <div class="md-toolbar">
         <h1 class="md-title">Suspects</h1>
-      </md-table-toolbar>
-      <md-table-row>
-        <md-table-head>Cards</md-table-head>
-        <md-table-head v-for="player in players" v-bind:key="player.name">{{ player.name }}</md-table-head>
-      </md-table-row>
-      <md-table-row v-for="suspect in suspects" v-bind:key="suspect.name">
-        <md-table-cell>{{ suspect.name }}</md-table-cell>
-        <md-table-cell v-for="player in suspect.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u' }">
-          <has-card v-bind:player="player"></has-card>
-        </md-table-cell>
-      </md-table-row>
-    </md-table>
+      </div>
+      <md-content class="md-scrollbar">
+        <table>
+        <tr>
+          <th class="tc">Cards</th>
+          <th v-for="player in players" v-bind:key="player.name" class="tc"><div class="th">{{ player.name }}</div></th>
+        </tr>
+        <tr v-for="item in suspects" v-bind:key="item.name">
+          <td class="tc">{{ item.name }}</td>
+          <td v-for="player in item.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u', tc: true }">
+            <has-card v-bind:player="player"></has-card>
+          </td>
+        </tr>
+        </table>
+      </md-content>
+    </md-card>
     <br>
-    <md-table md-card>
-      <md-table-toolbar>
+    <md-card>
+      <div class="md-toolbar">
         <h1 class="md-title">Weapons</h1>
-      </md-table-toolbar>
-      <md-table-row>
-        <md-table-head>Cards</md-table-head>
-        <md-table-head v-for="player in players" v-bind:key="player.name">{{ player.name }}</md-table-head>
-      </md-table-row>
-      <md-table-row v-for="weapon in weapons" v-bind:key="weapon.name">
-        <md-table-cell>{{ weapon.name }}</md-table-cell>
-        <md-table-cell v-for="player in weapon.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u' }">
-          <has-card v-bind:player="player"></has-card>
-        </md-table-cell>
-      </md-table-row>
-    </md-table>
+      </div>
+      <md-content class="md-scrollbar">
+        <table>
+        <tr>
+          <th class="tc">Cards</th>
+          <th v-for="player in players" v-bind:key="player.name" class="tc"><div class="th">{{ player.name }}</div></th>
+        </tr>
+        <tr v-for="item in weapons" v-bind:key="item.name">
+          <td class="tc">{{ item.name }}</td>
+          <td v-for="player in item.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u', tc: true }">
+            <has-card v-bind:player="player"></has-card>
+          </td>
+        </tr>
+        </table>
+      </md-content>
+    </md-card>
     <br>
-    <md-table md-card>
-      <md-table-toolbar>
+    <md-card>
+      <div class="md-toolbar">
         <h1 class="md-title">Rooms</h1>
-      </md-table-toolbar>
-      <md-table-row>
-        <md-table-head>Cards</md-table-head>
-        <md-table-head v-for="player in players" v-bind:key="player.name">{{ player.name }}</md-table-head>
-      </md-table-row>
-      <md-table-row v-for="room in rooms" v-bind:key="room.name">
-        <md-table-cell>{{ room.name }}</md-table-cell>
-        <md-table-cell v-for="player in room.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u' }">
-          <has-card v-bind:player="player"></has-card>
-        </md-table-cell>
-      </md-table-row>
-    </md-table>
+      </div>
+      <md-content class="md-scrollbar">
+        <table>
+        <tr>
+          <th class="tc">Cards</th>
+          <th v-for="player in players" v-bind:key="player.name" class="tc"><div class="th">{{ player.name }}</div></th>
+        </tr>
+        <tr v-for="item in rooms" v-bind:key="item.name">
+          <td class="tc">{{ item.name }}</td>
+          <td v-for="player in item.players" v-bind:key="player.name" v-bind:class="{ yes: player.has === 'y', no: player.has === 'n', unknown: player.has === 'u', tc: true }">
+            <has-card v-bind:player="player"></has-card>
+          </td>
+        </tr>
+        </table>
+      </md-content>
+    </md-card>
   </div>
 </template>
 
@@ -84,28 +96,40 @@ export default {
     overflow: auto;
   }
 
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
   th, td {
+    padding: 12px;
     text-align: center;
-    width: 70px;
+    width: 60px;
+  }
+
+  th {
+    color: var(--md-theme-default-text-accent-on-background, rgba(0,0,0,0.54));
+    font-size: 12px;
+  }
+
+  td {
+    border-top: 1px solid var(--md-theme-default-divider-on-background, rgba(0,0,0,0.12));
+  }
+
+  .th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 36px;
   }
 
   th:first-child, td:first-child {
+    padding-right: 24px;
     text-align: left;
-    width: 100px;
+    width: inherit;
   }
 
-  .yes .md-table-cell-container i {
-    color: green;
-  }
-
-  .no .md-table-cell-container i {
-    color: #cccccc;
-  }
-
-  .unknown {
-  }
-
-  .menu {
+  .actions {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 4px;
