@@ -1,0 +1,11 @@
+{
+  "name": "vue-clue-card",
+  "author": "Jason LuBean",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

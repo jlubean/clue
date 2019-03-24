@@ -11,7 +11,12 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "heroku.start": "npm run heroku.build && cd dist && npm install && node app.js",
+    "heroku.deploy": "npm run heroku.build && npm run heroku.repo && npm run heroku.push",
+    "heroku.build": "npm run build && cp server/* dist",
+    "heroku.repo": "cd dist && rm -rf .git && git init && heroku git:remote -a vue-clue-card",
+    "heroku.push": "cd dist && git add . && git commit -am 'make it better' && git push --force heroku master"
   },
   "dependencies": {
     "vue": "^2.5.2",
