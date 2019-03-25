@@ -23,7 +23,7 @@ app.use(function (req, res, next) {
 
 app.use(setupStatic());
 
-app.get(/\/(?!static).*/, function (req, res) {
+app.get(/\/(?!(css|fonts|js|favicon.ico)).*/, function (req, res) {
 	var content = fs.readFileSync(__dirname + '/index.html', 'utf8');
 	res.set('Content-Type', 'text/html');
 	res.set('Cache-Control', 'no-cache');
@@ -41,7 +41,7 @@ function setupStatic() {
 	var statics = express.static(__dirname);
 
 	return function (req, res, next) {
-		if (/^\/static\/.+$/.test(req.path)) {
+		if (/^\/(css\/.+|fonts\/.+|js\/.+|favicon.ico)$/.test(req.path)) {
 			return statics(req, res, next);
 		} else {
 			return next();
