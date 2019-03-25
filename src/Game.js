@@ -47,6 +47,7 @@ export default {
       addPlayerToData(GameStorage.data, { name: player.name });
     }
     GameStorage.data.accusations.splice(0, GameStorage.data.accusations.length);
+    GameStorage.storeData();
   },
 
   addPlayer: function (player, cardNames) {
@@ -54,6 +55,7 @@ export default {
     if (cardNames) {
       this.setHasCards(GameStorage.data.players.length - 1, cardNames);
     }
+    GameStorage.storeData();
   },
 
   setHasCards: function (playerIndex, cardNames) {
@@ -76,6 +78,7 @@ export default {
         card.players[playerIndex].has = 'n';
       }
     });
+    GameStorage.storeData();
   },
 
   addAccusation: function (accuserIndex, suspect, weapon, room, revealerIndex, revealed) {
@@ -124,5 +127,6 @@ export default {
         roomCard.players[index].has = 'n';
       }
     });
+    GameStorage.storeData();
   }
 };
